@@ -38,10 +38,13 @@ spec:
               apiId:
                 description: Foo is an example field of ApimService. Edit apimservice_types.go
                   to remove/update
+                format: string
                 type: string
               apiPath:
+                format: string
                 type: string
               apiUrl:
+                format: string
                 type: string
             required:
             - apiId

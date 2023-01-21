@@ -29,8 +29,14 @@ type ApimServiceSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Foo is an example field of ApimService. Edit apimservice_types.go to remove/update
-	ApiId   string `json:"apiId"`
-	ApiUrl  string `json:"apiUrl"`
+	// +kubebuilder:validation:Required
+	// +kubebuilder:validation:Format:=string
+	ApiId string `json:"apiId"`
+	// +kubebuilder:validation:Required
+	// +kubebuilder:validation:Format:=string
+	ApiUrl string `json:"apiUrl"`
+	// +kubebuilder:validation:Required
+	// +kubebuilder:validation:Format:=string
 	ApiPath string `json:"apiPath"`
 }
 
