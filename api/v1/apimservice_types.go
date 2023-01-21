@@ -29,7 +29,9 @@ type ApimServiceSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Foo is an example field of ApimService. Edit apimservice_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	ApiId   string `json:"apiId"`
+	ApiUrl  string `json:"apiUrl"`
+	ApiPath string `json:"apiPath"`
 }
 
 // ApimServiceStatus defines the observed state of ApimService

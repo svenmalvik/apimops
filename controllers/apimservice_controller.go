@@ -47,9 +47,16 @@ type ApimServiceReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.14.1/pkg/reconcile
 func (r *ApimServiceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	log := log.FromContext(ctx)
 
-	// TODO(user): your logic here
+	var sma apimmgmtv1.ApimServiceSpec
+
+	log.Info("Dies ist ein Test")
+
+	apim := &apimmgmtv1.ApimService{}
+	apiid := sma.ApiId
+	log.Info(apiid)
+	log.Info(apim.Spec.ApiId)
 
 	return ctrl.Result{}, nil
 }

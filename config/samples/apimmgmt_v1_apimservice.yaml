@@ -3,10 +3,12 @@ kind: ApimService
 metadata:
   labels:
     app.kubernetes.io/name: apimservice
-    app.kubernetes.io/instance: apimservice-sample
+    app.kubernetes.io/instance: apimservice-instance
     app.kubernetes.io/part-of: apimops
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/created-by: apimops
-  name: apimservice-sample
+  name: apimservice-try1
 spec:
-  # TODO(user): Add fields here
+  apiId: "ConfDemo2"
+  apiPath: "conf"
+  apiUrl: "https://conferenceapi.azurewebsites.net"
