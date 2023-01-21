@@ -20,11 +20,10 @@ import (
 	"context"
 
 	"k8s.io/apimachinery/pkg/runtime"
+	apimmgmtv1 "no.malvik/apimops/api/v1"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
-
-	apimmgmtv1 "no.malvik/apimops/api/v1"
 )
 
 // ApimServiceReconciler reconciles a ApimService object
@@ -47,17 +46,27 @@ type ApimServiceReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.14.1/pkg/reconcile
 func (r *ApimServiceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	log := log.FromContext(ctx)
+	l := log.FromContext(ctx)
 
-	var sma apimmgmtv1.ApimServiceSpec
+	var apimmgmtv1 apimmgmtv1.ApimService
+	apiUrl := apimmgmtv1.Spec.ApiUrl
 
-	log.Info("Dies ist ein Test")
+	l.Info("Dies ist ein Test")
+	l.Info(apiUrl)
+	//resp, err := http.Get(myapim.Spec.ApiUrl)
+	/*	resp, err := http.Get("https://conferenceapi.azurewebsites.net")
+		if err != nil {
+			log.Error(err, "Fehler")
+		}
 
-	apim := &apimmgmtv1.ApimService{}
-	apiid := sma.ApiId
-	log.Info(apiid)
-	log.Info(apim.Spec.ApiId)
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Error(err, "Fehler 2")
+		}
 
+		sb := string(body)
+		log.Info(sb)
+	*/
 	return ctrl.Result{}, nil
 }
 

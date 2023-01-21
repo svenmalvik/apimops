@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/part-of: apimops
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/created-by: apimops
-  name: apimservice-try1
+  name: apimservice-try2
 spec:
   apiId: "ConfDemo2"
   apiPath: "conf"

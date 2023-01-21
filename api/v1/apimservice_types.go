@@ -48,7 +48,7 @@ type ApimService struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   ApimServiceSpec   `json:"spec,omitempty"`
+	Spec   ApimServiceSpec   `json:"spec"`
 	Status ApimServiceStatus `json:"status,omitempty"`
 }
 
