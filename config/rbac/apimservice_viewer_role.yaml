@@ -1,0 +1,27 @@
+# permissions for end users to view apimservices.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: apimservice-viewer-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: apimops
+    app.kubernetes.io/part-of: apimops
+    app.kubernetes.io/managed-by: kustomize
+  name: apimservice-viewer-role
+rules:
+- apiGroups:
+  - apimmgmt.no.malvik
+  resources:
+  - apimservices
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apimmgmt.no.malvik
+  resources:
+  - apimservices/status
+  verbs:
+  - get
