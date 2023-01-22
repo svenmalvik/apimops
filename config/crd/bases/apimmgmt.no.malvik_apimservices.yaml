@@ -36,8 +36,6 @@ spec:
             description: ApimServiceSpec defines the desired state of ApimService
             properties:
               apiId:
-                description: Foo is an example field of ApimService. Edit apimservice_types.go
-                  to remove/update
                 format: string
                 type: string
               apiPath:
@@ -46,10 +44,32 @@ spec:
               apiUrl:
                 format: string
                 type: string
+              description:
+                format: string
+                type: string
+              displayName:
+                format: string
+                type: string
+              resourceGroup:
+                format: string
+                type: string
+              serviceName:
+                format: string
+                type: string
+              subscriptionId:
+                description: Foo is an example field of ApimService. Edit apimservice_types.go
+                  to remove/update
+                format: string
+                type: string
             required:
             - apiId
             - apiPath
             - apiUrl
+            - description
+            - displayName
+            - resourceGroup
+            - serviceName
+            - subscriptionId
             type: object
           status:
             description: ApimServiceStatus defines the observed state of ApimService

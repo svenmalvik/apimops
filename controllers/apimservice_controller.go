@@ -19,6 +19,9 @@ package controllers
 import (
 	"context"
 
+	"github.com/Azure/azure-sdk-for-go/sdk/azcore/to"
+	azidentity "github.com/Azure/azure-sdk-for-go/sdk/azidentity"
+	armapimanagement "github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/apimanagement/armapimanagement"
 	"k8s.io/apimachinery/pkg/runtime"
 	apimmgmtv1 "no.malvik/apimops/api/v1"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -45,30 +48,48 @@ func (r *ApimServiceReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	var apimmgmtv1 apimmgmtv1.ApimService
 	if err := r.Get(ctx, req.NamespacedName, &apimmgmtv1); err != nil {
 		l.Error(err, "unable to fetch Foo")
-		// we'll ignore not-found errors, since they can't be fixed by an immediate
-		// requeue (we'll need to wait for a new notification), and we can get them
-		// on deleted requests.
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
-
 	apiUrl := apimmgmtv1.Spec.ApiUrl
-
-	l.Info("Dies ist ein Test")
 	l.Info(apiUrl)
-	//resp, err := http.Get(myapim.Spec.ApiUrl)
-	/*	resp, err := http.Get("https://conferenceapi.azurewebsites.net")
-		if err != nil {
-			log.Error(err, "Fehler")
-		}
 
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			log.Error(err, "Fehler 2")
-		}
+	// Get Azure credentials
+	cred, err := azidentity.NewDefaultAzureCredential(nil)
+	if err != nil {
+		l.Error(err, "unable to get Azure credentials")
+		return ctrl.Result{}, err
+	}
 
-		sb := string(body)
-		log.Info(sb)
-	*/
+	// Get subscription ID
+	subscriptionID := apimmgmtv1.Spec.SubscriptionId
+
+	// Create a new API Management client
+	// Create the client
+	client, err := armapimanagement.NewAPIClient(subscriptionID, cred, nil)
+	if err != nil {
+		l.Error(err, "unable to get API Management client")
+		return ctrl.Result{}, err
+	}
+	client.BeginCreateOrUpdate(ctx,
+		apimmgmtv1.Spec.ResourceGroup,
+		apimmgmtv1.Spec.ServiceName,
+		"conference",
+		armapimanagement.APICreateOrUpdateParameter{
+			Properties: &armapimanagement.APICreateOrUpdateProperties{
+				Description: to.Ptr(apimmgmtv1.Spec.Description),
+				DisplayName: to.Ptr(apimmgmtv1.Spec.DisplayName),
+				Path:        to.Ptr("conf"),
+				Protocols: []*armapimanagement.Protocol{
+					to.Ptr(armapimanagement.Protocol("https")),
+					to.Ptr(armapimanagement.Protocol("http"))},
+				Format:    to.Ptr(armapimanagement.ContentFormat("swagger-link-json")),
+				Value:     to.Ptr(apiUrl),
+				IsCurrent: to.Ptr(true),
+				IsOnline:  to.Ptr(true),
+			},
+		},
+		&armapimanagement.APIClientBeginCreateOrUpdateOptions{IfMatch: nil})
+
 	return ctrl.Result{}, nil
 }
 
