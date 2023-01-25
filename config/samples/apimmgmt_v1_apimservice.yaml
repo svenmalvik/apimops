@@ -9,11 +9,10 @@ metadata:
     app.kubernetes.io/created-by: apimops
   name: apimservice
 spec:
-  displayName: "Petstore API"
+  displayName: "My Petstore API"
   description: "Everything for your pet"
   apiId: "petstoreapi"
   apiPath: "petstore"
   apiUrl: "https://petstore.swagger.io/v2/swagger.json"
-  subscriptionId: "23d1f8f1-7b90-4108-9ddf-8bd3cca801a1"
   resourceGroup: "sma-rg"
   serviceName: "sma-apim"

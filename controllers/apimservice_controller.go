@@ -18,6 +18,7 @@ package controllers
 
 import (
 	"context"
+	"os"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/to"
 	azidentity "github.com/Azure/azure-sdk-for-go/sdk/azidentity"
@@ -60,17 +61,13 @@ func (r *ApimServiceReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return ctrl.Result{}, err
 	}
 
-	// Get subscription ID
-	subscriptionID := apimmgmtv1.Spec.SubscriptionId
-
-	// Create a new API Management client
-	// Create the client
+	subscriptionID := os.Getenv("AZURE_SUBSCRIPTION_ID")
 	client, err := armapimanagement.NewAPIClient(subscriptionID, cred, nil)
 	if err != nil {
 		l.Error(err, "unable to get API Management client")
 		return ctrl.Result{}, err
 	}
-	client.BeginCreateOrUpdate(ctx,
+	_, err = client.BeginCreateOrUpdate(ctx,
 		apimmgmtv1.Spec.ResourceGroup,
 		apimmgmtv1.Spec.ServiceName,
 		"conference",
@@ -78,17 +75,18 @@ func (r *ApimServiceReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 			Properties: &armapimanagement.APICreateOrUpdateProperties{
 				Description: to.Ptr(apimmgmtv1.Spec.Description),
 				DisplayName: to.Ptr(apimmgmtv1.Spec.DisplayName),
-				Path:        to.Ptr("conf"),
-				Protocols: []*armapimanagement.Protocol{
-					to.Ptr(armapimanagement.Protocol("https")),
-					to.Ptr(armapimanagement.Protocol("http"))},
-				Format:    to.Ptr(armapimanagement.ContentFormat("swagger-link-json")),
-				Value:     to.Ptr(apiUrl),
-				IsCurrent: to.Ptr(true),
-				IsOnline:  to.Ptr(true),
+				Path:        to.Ptr(apimmgmtv1.Spec.ApiPath),
+				Format:      to.Ptr(armapimanagement.ContentFormat("swagger-link-json")),
+				Value:       to.Ptr(apiUrl),
+				IsCurrent:   to.Ptr(true),
+				IsOnline:    to.Ptr(true),
 			},
 		},
 		&armapimanagement.APIClientBeginCreateOrUpdateOptions{IfMatch: nil})
+	if err != nil {
+		l.Error(err, "unable to create API")
+		return ctrl.Result{}, err
+	}
 
 	return ctrl.Result{}, nil
 }
