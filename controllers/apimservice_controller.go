@@ -46,13 +46,12 @@ type ApimServiceReconciler struct {
 func (r *ApimServiceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	l := log.FromContext(ctx)
 
+	// Read ApimService manifest
 	var apimmgmtv1 apimmgmtv1.ApimService
 	if err := r.Get(ctx, req.NamespacedName, &apimmgmtv1); err != nil {
 		l.Error(err, "unable to fetch Foo")
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
-	apiUrl := apimmgmtv1.Spec.ApiUrl
-	l.Info(apiUrl)
 
 	// Get Azure credentials
 	cred, err := azidentity.NewDefaultAzureCredential(nil)
@@ -70,14 +69,14 @@ func (r *ApimServiceReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	_, err = client.BeginCreateOrUpdate(ctx,
 		apimmgmtv1.Spec.ResourceGroup,
 		apimmgmtv1.Spec.ServiceName,
-		"conference",
+		"petstore",
 		armapimanagement.APICreateOrUpdateParameter{
 			Properties: &armapimanagement.APICreateOrUpdateProperties{
 				Description: to.Ptr(apimmgmtv1.Spec.Description),
 				DisplayName: to.Ptr(apimmgmtv1.Spec.DisplayName),
 				Path:        to.Ptr(apimmgmtv1.Spec.ApiPath),
 				Format:      to.Ptr(armapimanagement.ContentFormat("swagger-link-json")),
-				Value:       to.Ptr(apiUrl),
+				Value:       to.Ptr(apimmgmtv1.Spec.ApiUrl),
 				IsCurrent:   to.Ptr(true),
 				IsOnline:    to.Ptr(true),
 			},
